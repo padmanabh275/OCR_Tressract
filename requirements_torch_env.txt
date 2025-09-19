@@ -1,0 +1,29 @@
+# Core AI/ML packages (already in torch_env)
+torch>=2.5.0
+torchvision>=0.20.0
+torchaudio>=2.5.0
+pytorch-lightning>=2.5.0
+
+# Document processing
+opencv-python>=4.8.0
+pytesseract>=0.3.10
+pymupdf>=1.23.0
+pillow>=10.0.0
+numpy>=1.24.0
+
+# Web framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+python-multipart>=0.0.6
+pydantic>=2.5.0
+
+# HTTP requests
+requests>=2.31.0
+
+# Optional: Advanced features
+scikit-learn>=1.3.0
+scipy>=1.11.0
+imutils>=0.5.4
+
+# Optional: NLP (if needed)
+spacy>=3.7.0

@@ -1,382 +1,638 @@
-# Advanced AI Document Extraction System - API Documentation
+# API Documentation
+## Document Information Extraction System
 
-## Overview
+---
 
-The Advanced AI Document Extraction System provides a comprehensive REST API for extracting structured information from various document types. The system supports both single document processing and batch processing with real-time progress tracking.
-
-## Base URL
-
+## 🌐 **Base URL**
 ```
-http://localhost:8000
+http://localhost:8001
 ```
 
-## Authentication
+---
 
-Currently, the API does not require authentication. In production environments, consider implementing proper authentication mechanisms.
+## 📋 **Authentication**
+Currently, the API does not require authentication. For production deployment, consider implementing API keys or OAuth2.
 
-## API Endpoints
+---
 
-### 1. Upload Single Document
+## 📊 **Response Format**
+All API responses follow a consistent JSON format:
 
-**Endpoint:** `POST /upload`
-
-**Description:** Upload and process a single document
-
-**Request:**
-- **Content-Type:** `multipart/form-data`
-- **Body:** File upload
-
-**Parameters:**
-- `file` (required): The document file to process
-  - Supported formats: PDF, JPG, JPEG, PNG, TIFF, TXT
-  - Maximum file size: 50MB
-
-**Response:**
 ```json
 {
-  "id": "uuid-string",
+  "id": "uuid",
   "filename": "document.pdf",
-  "document_type": "driver_license",
-  "confidence_score": 0.85,
-  "extracted_data": {
-    "first_name": "John",
-    "last_name": "Smith",
-    "date_of_birth": "1985-03-15",
-    "marriage_date": null,
-    "birth_city": null,
-    "ssn": "123-45-6789",
-    "current_address": "123 Main Street",
-    "financial_data": {
-      "amounts_found": ["$75,000.00"],
-      "tax_years": ["2023"]
-    },
-    "validation": {
-      "is_valid": true,
-      "warnings": [],
-      "errors": [],
-      "field_scores": {
-        "ssn": 1.0,
-        "date_of_birth": 1.0,
-        "names": 1.0
-      }
-    }
-  },
-  "processing_time": 2.34,
-  "status": "completed"
-}
-```
-
-### 2. Upload Multiple Documents (Batch Processing)
-
-**Endpoint:** `POST /upload/batch`
-
-**Description:** Upload and process multiple documents in a single request
-
-**Request:**
-- **Content-Type:** `multipart/form-data`
-- **Body:** Multiple file uploads
-
-**Parameters:**
-- `files` (required): Array of document files to process
-  - Supported formats: PDF, JPG, JPEG, PNG, TIFF, TXT
-  - Maximum files per batch: 50
-  - Maximum total size: 500MB
-
-**Response:**
-```json
-{
-  "batch_id": "uuid-string",
-  "total_documents": 5,
-  "processed_documents": 4,
-  "failed_documents": 1,
+  "document_type": "passport",
+  "confidence_score": 0.95,
+  "processing_time": 5.2,
   "status": "completed",
-  "results": [
-    {
-      "id": "uuid-string",
-      "filename": "document1.pdf",
-      "document_type": "driver_license",
-      "confidence_score": 0.85,
-      "extracted_data": { /* ... */ },
-      "processing_time": 2.34,
-      "status": "completed"
-    }
-    // ... more results
-  ]
+  "extracted_data": { ... },
+  "metadata": { ... }
 }
 ```
 
-### 3. Get Document Results
+---
 
-**Endpoint:** `GET /results/{document_id}`
+## 🔄 **Document Processing Endpoints**
 
-**Description:** Retrieve results for a specific document
-
-**Parameters:**
-- `document_id` (path): The unique identifier of the document
-
-**Response:**
-```json
-{
-  "id": "uuid-string",
-  "filename": "document.pdf",
-  "document_type": "driver_license",
-  "confidence_score": 0.85,
-  "extracted_data": { /* ... */ },
-  "processing_time": 2.34,
-  "status": "completed"
-}
+### **1. Basic Document Processing**
+```http
+POST /upload
 ```
 
-### 4. Get All Results
+**Description**: Process a single document using standard OCR and field extraction.
 
-**Endpoint:** `GET /results`
+**Request**:
+- **Content-Type**: `multipart/form-data`
+- **Body**: File upload
 
-**Description:** Retrieve all processed document results
+**Response**: `DocumentResponse`
 
-**Response:**
-```json
-[
-  {
-    "id": "uuid-string",
-    "filename": "document1.pdf",
-    "document_type": "driver_license",
-    "confidence_score": 0.85,
-    "extracted_data": { /* ... */ },
-    "processing_time": 2.34,
-    "status": "completed"
-  }
-  // ... more results
-]
-```
-
-### 5. Export Document Results
-
-**Endpoint:** `GET /export/{document_id}`
-
-**Description:** Export document results in various formats
-
-**Parameters:**
-- `document_id` (path): The unique identifier of the document
-- `format` (query): Export format (`json` or `csv`)
-
-**Response:**
-- **JSON format:** Same as document results
-- **CSV format:** CSV data with headers
-
-### 6. Get Processing Statistics
-
-**Endpoint:** `GET /stats`
-
-**Description:** Get system processing statistics
-
-**Response:**
-```json
-{
-  "total_documents": 150,
-  "total_batches": 25,
-  "average_confidence": 0.82,
-  "document_types": {
-    "driver_license": 45,
-    "w2_form": 30,
-    "birth_certificate": 25,
-    "utility_bill": 20,
-    "bank_statement": 15,
-    "tax_return": 15
-  }
-}
-```
-
-## Document Types Supported
-
-The system can automatically classify and process the following document types:
-
-1. **Personal Identification**
-   - Driver's License
-   - Passport
-   - Birth Certificate
-
-2. **Social Security Documents**
-   - SSN-containing documents
-
-3. **Proof of Address**
-   - Utility Bills
-   - Rental Agreements
-   - Government-issued IDs
-
-4. **Financial Information**
-   - Tax Returns (Form 1040)
-   - W-2 Forms
-   - Bank Statements
-
-## Extracted Fields
-
-The system extracts the following structured information:
-
-- **Personal Information**
-  - First Name
-  - Last Name
-  - Date of Birth
-  - Marriage Date
-  - Birth City
-
-- **Identification**
-  - Social Security Number (SSN)
-  - Current Address
-
-- **Financial Data**
-  - Monetary amounts
-  - Tax years
-  - Income-related keywords
-  - Account balances
-
-## Error Handling
-
-The API uses standard HTTP status codes:
-
-- `200 OK`: Request successful
-- `400 Bad Request`: Invalid request parameters
-- `404 Not Found`: Document or resource not found
-- `422 Unprocessable Entity`: Validation error
-- `500 Internal Server Error`: Server error
-
-Error responses include detailed error messages:
-
-```json
-{
-  "detail": "Error message describing what went wrong"
-}
-```
-
-## Rate Limiting
-
-Currently, no rate limiting is implemented. For production use, consider implementing rate limiting to prevent abuse.
-
-## File Size Limits
-
-- **Single file:** 50MB maximum
-- **Batch upload:** 500MB total maximum
-- **Batch size:** 50 files maximum per batch
-
-## Supported File Formats
-
-- **PDF:** `.pdf`
-- **Images:** `.jpg`, `.jpeg`, `.png`, `.tiff`
-- **Text:** `.txt`
-
-## Confidence Scoring
-
-The system provides confidence scores (0.0 to 1.0) for extracted data:
-
-- **0.8 - 1.0:** High confidence
-- **0.5 - 0.8:** Medium confidence
-- **0.0 - 0.5:** Low confidence
-
-## Validation
-
-The system includes built-in validation for:
-
-- SSN format validation
-- Date format validation
-- Name field validation
-- Address format validation
-
-## Web Interface
-
-The system includes a modern web interface accessible at:
-
-- **Main Interface:** `http://localhost:8000`
-- **API Documentation:** `http://localhost:8000/docs`
-- **ReDoc Documentation:** `http://localhost:8000/redoc`
-
-## Usage Examples
-
-### cURL Examples
-
-**Upload single document:**
+**Example**:
 ```bash
-curl -X POST "http://localhost:8000/upload" \
+curl -X POST "http://localhost:8001/upload" \
   -H "Content-Type: multipart/form-data" \
   -F "file=@document.pdf"
 ```
 
-**Upload multiple documents:**
+---
+
+### **2. Dual Processing (Recommended)**
+```http
+POST /upload/dual
+```
+
+**Description**: Process document using both Indian and standard methods, returning the best result based on confidence.
+
+**Request**:
+- **Content-Type**: `multipart/form-data`
+- **Body**: File upload
+
+**Response**: `DocumentResponse` with dual processing details
+
+**Example**:
 ```bash
-curl -X POST "http://localhost:8000/upload/batch" \
+curl -X POST "http://localhost:8001/upload/dual" \
   -H "Content-Type: multipart/form-data" \
-  -F "files=@document1.pdf" \
-  -F "files=@document2.jpg"
+  -F "file=@document.pdf"
 ```
 
-**Get document results:**
+**Response includes**:
+```json
+{
+  "dual_processing": {
+    "indian_confidence": 0.85,
+    "standard_confidence": 0.92,
+    "confidence_difference": 0.07,
+    "best_method": "standard",
+    "total_processing_time": 8.5
+  }
+}
+```
+
+---
+
+### **3. Ollama LLM Enhanced Processing**
+```http
+POST /upload/ollama
+```
+
+**Description**: Process document using Ollama LLM for enhanced text understanding and field extraction.
+
+**Request**:
+- **Content-Type**: `multipart/form-data`
+- **Body**: File upload
+
+**Response**: `OllamaProcessingResponse`
+
+**Example**:
 ```bash
-curl -X GET "http://localhost:8000/results/{document_id}"
+curl -X POST "http://localhost:8001/upload/ollama" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@document.pdf"
 ```
 
-**Export as CSV:**
+**Response includes**:
+```json
+{
+  "extraction_method": "ollama_llm",
+  "model_used": "llama3.2:latest",
+  "text_enhancement": {
+    "original_length": 500,
+    "enhanced_length": 520,
+    "improvement_ratio": 1.04
+  },
+  "classification": {
+    "document_type": "passport",
+    "confidence": 0.95,
+    "country": "US",
+    "is_indian_document": false
+  },
+  "validation": {
+    "is_valid": true,
+    "confidence": 0.95,
+    "corrections": {},
+    "missing_fields": []
+  }
+}
+```
+
+---
+
+### **4. Enhanced Accuracy Processing**
+```http
+POST /upload/enhanced
+```
+
+**Description**: Process document with comprehensive accuracy enhancements.
+
+**Request**:
+- **Content-Type**: `multipart/form-data`
+- **Body**: File upload
+- **Query Parameters**:
+  - `accuracy_mode`: `fast` | `balanced` | `maximum`
+  - `document_type`: Document type hint
+
+**Response**: `EnhancedAccuracyResponse`
+
+**Example**:
 ```bash
-curl -X GET "http://localhost:8000/export/{document_id}?format=csv"
+curl -X POST "http://localhost:8001/upload/enhanced?accuracy_mode=maximum&document_type=passport" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@document.pdf"
 ```
 
-### Python Examples
+---
 
+### **5. Batch Processing**
+```http
+POST /upload/batch
+```
+
+**Description**: Process multiple documents in batch.
+
+**Request**:
+- **Content-Type**: `multipart/form-data`
+- **Body**: Multiple file uploads
+
+**Response**: Array of `DocumentResponse`
+
+**Example**:
+```bash
+curl -X POST "http://localhost:8001/upload/batch" \
+  -H "Content-Type: multipart/form-data" \
+  -F "files=@doc1.pdf" \
+  -F "files=@doc2.png" \
+  -F "files=@doc3.jpg"
+```
+
+---
+
+## 🤖 **Ollama Integration Endpoints**
+
+### **1. Check Ollama Status**
+```http
+GET /ollama/status
+```
+
+**Description**: Check if Ollama service is running and get current model information.
+
+**Response**:
+```json
+{
+  "status": "available",
+  "model": "llama3.2:latest",
+  "base_url": "http://localhost:11434",
+  "message": "Ollama service is running and ready for processing"
+}
+```
+
+**Example**:
+```bash
+curl -X GET "http://localhost:8001/ollama/status"
+```
+
+---
+
+### **2. List Available Models**
+```http
+GET /ollama/models
+```
+
+**Description**: Get list of available Ollama models.
+
+**Response**:
+```json
+{
+  "status": "success",
+  "models": [
+    {
+      "name": "llama3.2:latest",
+      "size": "2019393189"
+    },
+    {
+      "name": "smollm2:135m",
+      "size": "270898672"
+    }
+  ],
+  "current_model": "llama3.2:latest"
+}
+```
+
+**Example**:
+```bash
+curl -X GET "http://localhost:8001/ollama/models"
+```
+
+---
+
+## 📊 **Database Management Endpoints**
+
+### **1. Get All Documents**
+```http
+GET /documents
+```
+
+**Description**: Retrieve all processed documents with optional filtering.
+
+**Query Parameters**:
+- `limit`: Number of documents to return (default: 100)
+- `offset`: Number of documents to skip (default: 0)
+- `document_type`: Filter by document type
+- `min_confidence`: Minimum confidence score
+- `max_confidence`: Maximum confidence score
+
+**Response**: Array of document objects
+
+**Example**:
+```bash
+curl -X GET "http://localhost:8001/documents?limit=10&min_confidence=0.8"
+```
+
+---
+
+### **2. Get Specific Document**
+```http
+GET /documents/{document_id}
+```
+
+**Description**: Retrieve a specific document by ID.
+
+**Path Parameters**:
+- `document_id`: UUID of the document
+
+**Response**: Document object
+
+**Example**:
+```bash
+curl -X GET "http://localhost:8001/documents/123e4567-e89b-12d3-a456-426614174000"
+```
+
+---
+
+### **3. Delete Document**
+```http
+DELETE /documents/{document_id}
+```
+
+**Description**: Delete a specific document from the database.
+
+**Path Parameters**:
+- `document_id`: UUID of the document
+
+**Response**: Success message
+
+**Example**:
+```bash
+curl -X DELETE "http://localhost:8001/documents/123e4567-e89b-12d3-a456-426614174000"
+```
+
+---
+
+### **4. Database Statistics**
+```http
+GET /stats
+```
+
+**Description**: Get processing statistics and metrics.
+
+**Response**:
+```json
+{
+  "total_documents": 150,
+  "high_confidence_documents": 120,
+  "medium_confidence_documents": 25,
+  "low_confidence_documents": 5,
+  "average_confidence": 0.87,
+  "processing_times": {
+    "average": 4.2,
+    "min": 1.1,
+    "max": 12.5
+  },
+  "document_types": {
+    "passport": 45,
+    "driver_license": 30,
+    "pan_card": 25,
+    "other": 50
+  }
+}
+```
+
+**Example**:
+```bash
+curl -X GET "http://localhost:8001/stats"
+```
+
+---
+
+## 🎯 **Accuracy and Quality Endpoints**
+
+### **1. Get Accuracy Modes**
+```http
+GET /accuracy/modes
+```
+
+**Description**: Get available accuracy modes and their descriptions.
+
+**Response**:
+```json
+{
+  "modes": {
+    "fast": {
+      "description": "Quick processing with basic accuracy",
+      "processing_time": "1-3 seconds",
+      "accuracy": "85-90%"
+    },
+    "balanced": {
+      "description": "Balanced processing with good accuracy",
+      "processing_time": "4-6 seconds",
+      "accuracy": "90-95%"
+    },
+    "maximum": {
+      "description": "Maximum accuracy with advanced processing",
+      "processing_time": "8-12 seconds",
+      "accuracy": "95-98%"
+    }
+  }
+}
+```
+
+---
+
+### **2. Get Accuracy Statistics**
+```http
+GET /accuracy/stats
+```
+
+**Description**: Get accuracy-related statistics and metrics.
+
+**Response**:
+```json
+{
+  "overall_accuracy": 0.92,
+  "accuracy_by_type": {
+    "indian_documents": 0.96,
+    "international_documents": 0.89,
+    "ollama_enhanced": 0.94
+  },
+  "confidence_distribution": {
+    "high": 80,
+    "medium": 15,
+    "low": 5
+  },
+  "processing_methods": {
+    "indian_enhanced": 45,
+    "standard_enhanced": 60,
+    "ollama_llm": 30
+  }
+}
+```
+
+---
+
+## 🌐 **Web Interface Endpoints**
+
+### **1. Main Upload Interface**
+```http
+GET /
+```
+
+**Description**: Main upload interface for document processing.
+
+**Response**: HTML page
+
+---
+
+### **2. Database Viewer**
+```http
+GET /database
+```
+
+**Description**: Database viewer interface with filtering and export capabilities.
+
+**Response**: HTML page
+
+---
+
+### **3. API Documentation**
+```http
+GET /docs
+```
+
+**Description**: Interactive API documentation (Swagger UI).
+
+**Response**: HTML page
+
+---
+
+## 📝 **Data Models**
+
+### **DocumentResponse**
+```json
+{
+  "id": "string (UUID)",
+  "filename": "string",
+  "document_type": "string",
+  "confidence_score": "number (0.0-1.0)",
+  "processing_time": "number (seconds)",
+  "extracted_data": {
+    "first_name": "string",
+    "last_name": "string",
+    "date_of_birth": "string (YYYY-MM-DD)",
+    "marriage_date": "string (YYYY-MM-DD)",
+    "birth_city": "string",
+    "ssn": "string",
+    "current_address": "string",
+    "financial_data": "object",
+    "validation": "object"
+  },
+  "status": "string",
+  "upload_timestamp": "string (ISO 8601)"
+}
+```
+
+### **OllamaProcessingResponse**
+```json
+{
+  "id": "string (UUID)",
+  "filename": "string",
+  "document_type": "string",
+  "confidence_score": "number (0.0-1.0)",
+  "processing_time": "number (seconds)",
+  "extraction_method": "string",
+  "model_used": "string",
+  "text_enhancement": {
+    "original_length": "number",
+    "enhanced_length": "number",
+    "improvement_ratio": "number"
+  },
+  "classification": {
+    "document_type": "string",
+    "confidence": "number",
+    "reasoning": "string",
+    "country": "string",
+    "is_indian_document": "boolean"
+  },
+  "extracted_data": "object",
+  "validation": "object",
+  "metadata": "object",
+  "upload_timestamp": "string (ISO 8601)"
+}
+```
+
+---
+
+## ⚠️ **Error Handling**
+
+### **Common Error Responses**
+
+#### **400 Bad Request**
+```json
+{
+  "detail": "Invalid file format. Supported formats: PDF, PNG, JPG, JPEG"
+}
+```
+
+#### **413 Payload Too Large**
+```json
+{
+  "detail": "File size exceeds maximum limit of 10MB"
+}
+```
+
+#### **422 Unprocessable Entity**
+```json
+{
+  "detail": "Unable to process document. Please ensure the document is clear and readable"
+}
+```
+
+#### **500 Internal Server Error**
+```json
+{
+  "detail": "An error occurred during processing. Please try again later"
+}
+```
+
+#### **503 Service Unavailable**
+```json
+{
+  "detail": "Ollama service not available. Please ensure Ollama is running"
+}
+```
+
+---
+
+## 🔧 **Rate Limiting**
+
+Currently, there are no rate limits implemented. For production deployment, consider implementing:
+- Request rate limiting per IP
+- File size limits
+- Processing time limits
+- Concurrent request limits
+
+---
+
+## 📊 **Monitoring and Logging**
+
+### **Health Check**
+```http
+GET /health
+```
+
+**Description**: Check system health and status.
+
+**Response**:
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "version": "2.1.0",
+  "services": {
+    "database": "connected",
+    "ollama": "available",
+    "ocr": "ready"
+  }
+}
+```
+
+---
+
+## 🚀 **SDK Examples**
+
+### **Python SDK**
 ```python
 import requests
 
-# Upload single document
-with open('document.pdf', 'rb') as f:
-    response = requests.post(
-        'http://localhost:8000/upload',
-        files={'file': f}
-    )
+# Upload document
+with open("document.pdf", "rb") as f:
+    files = {"file": ("document.pdf", f, "application/pdf")}
+    response = requests.post("http://localhost:8001/upload/dual", files=files)
     result = response.json()
-
-# Upload multiple documents
-files = [
-    ('files', open('doc1.pdf', 'rb')),
-    ('files', open('doc2.jpg', 'rb'))
-]
-response = requests.post(
-    'http://localhost:8000/upload/batch',
-    files=files
-)
-batch_result = response.json()
-
-# Get all results
-response = requests.get('http://localhost:8000/results')
-all_results = response.json()
+    print(f"Confidence: {result['confidence_score']:.3f}")
 ```
 
-## Performance Considerations
+### **JavaScript SDK**
+```javascript
+const formData = new FormData();
+formData.append('file', fileInput.files[0]);
 
-- **Processing time:** Typically 1-5 seconds per document
-- **Concurrent processing:** Supports multiple simultaneous requests
-- **Memory usage:** Optimized for large document processing
-- **Storage:** Results are stored locally (consider cloud storage for production)
+fetch('http://localhost:8001/upload/dual', {
+  method: 'POST',
+  body: formData
+})
+.then(response => response.json())
+.then(data => console.log('Confidence:', data.confidence_score));
+```
 
-## Security Considerations
+### **cURL Examples**
+```bash
+# Basic upload
+curl -X POST "http://localhost:8001/upload" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@document.pdf"
 
-- **File validation:** Basic file type validation
-- **Data privacy:** No permanent storage of sensitive data
-- **CORS:** Configured for development (restrict in production)
-- **Input sanitization:** Basic input validation
+# Dual processing
+curl -X POST "http://localhost:8001/upload/dual" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@document.pdf"
 
-## Monitoring and Logging
+# Ollama processing
+curl -X POST "http://localhost:8001/upload/ollama" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@document.pdf"
+```
 
-The system provides:
+---
 
-- Processing statistics
-- Error logging
-- Performance metrics
-- Document type distribution
+## 📞 **Support**
 
-## Future Enhancements
+For API support and questions:
+- **Documentation**: Check this file and `/docs` endpoint
+- **Issues**: Create an issue on GitHub
+- **Email**: [Your contact information]
 
-Planned features include:
+---
 
-- User authentication and authorization
-- Cloud storage integration
-- Advanced ML models
-- Real-time processing status
-- Webhook notifications
-- API rate limiting
-- Advanced analytics dashboard
+**Last Updated**: January 2024  
+**API Version**: 2.1.0

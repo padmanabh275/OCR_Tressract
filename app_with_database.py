@@ -29,6 +29,7 @@ from indian_document_enhancer import IndianDocumentEnhancer
 from advanced_indian_accuracy import AdvancedIndianAccuracy
 from unified_document_processor import UnifiedDocumentProcessor
 from comprehensive_accuracy_system import ComprehensiveAccuracySystem
+from ollama_integration import OllamaEnhancedProcessor
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -57,6 +58,7 @@ indian_enhancer = IndianDocumentEnhancer()
 advanced_accuracy = AdvancedIndianAccuracy()
 unified_processor = UnifiedDocumentProcessor()
 comprehensive_accuracy = ComprehensiveAccuracySystem()
+ollama_processor = OllamaEnhancedProcessor()  # Initialize Ollama processor
 
 # Create directories
 upload_dir.mkdir(exist_ok=True)
@@ -103,6 +105,21 @@ class EnhancedAccuracyResponse(BaseModel):
     ml_enhancements: Dict[str, Any]
     extracted_data: Dict[str, Any]
     status: str
+    upload_timestamp: str
+
+class OllamaProcessingResponse(BaseModel):
+    id: str
+    filename: str
+    document_type: str
+    confidence_score: float
+    processing_time: float
+    extraction_method: str
+    model_used: str
+    text_enhancement: Dict[str, Any]
+    classification: Dict[str, Any]
+    extracted_data: Dict[str, Any]
+    validation: Dict[str, Any]
+    metadata: Dict[str, Any]
     upload_timestamp: str
 
 # Enhanced document processor with database integration
@@ -1283,6 +1300,153 @@ async def upload_dual_processing_document(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/upload/ollama", response_model=OllamaProcessingResponse)
+async def upload_ollama_processing_document(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...)
+):
+    """Upload and process document using Ollama LLM for enhanced extraction"""
+    try:
+        # Check if Ollama is available
+        if not ollama_processor.is_available:
+            raise HTTPException(
+                status_code=503, 
+                detail="Ollama service not available. Please ensure Ollama is running."
+            )
+        
+        # Generate unique document ID
+        doc_id = str(uuid.uuid4())
+        
+        # Save uploaded file
+        file_path = upload_dir / f"{doc_id}_{file.filename}"
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Get file size
+        file_size = file_path.stat().st_size
+        
+        # Extract text using traditional OCR first
+        start_time = datetime.now()
+        
+        # Use unified processor to get initial text
+        initial_result = unified_processor.process_document_dual(str(file_path))
+        initial_text = initial_result.best_result.extracted_data.raw_text or ""
+        
+        # Process with Ollama LLM
+        ollama_result = ollama_processor.process_document_with_llm(
+            initial_text, 
+            initial_result.best_result.document_type or "unknown"
+        )
+        
+        processing_time = (datetime.now() - start_time).total_seconds()
+        
+        # Create response data
+        response_data = {
+            "id": doc_id,
+            "filename": file.filename,
+            "original_filename": file.filename,
+            "file_path": str(file_path),
+            "file_size": file_size,
+            "document_type": ollama_result["classification"].get("document_type", "unknown"),
+            "confidence_score": ollama_result["confidence_score"],
+            "extraction_method": ollama_result["extraction_method"],
+            "model_used": ollama_result["model_used"],
+            "text_enhancement": ollama_result["text_enhancement"],
+            "classification": ollama_result["classification"],
+            "extracted_data": ollama_result["extracted_data"],
+            "validation": ollama_result["validation"],
+            "processing_time": processing_time,
+            "status": "completed",
+            "metadata": {
+                "ollama_available": True,
+                "model_used": ollama_result["model_used"],
+                "text_improvement_ratio": ollama_result["text_enhancement"].get("improvement_ratio", 1.0),
+                "validation_passed": ollama_result["validation"].get("is_valid", False)
+            }
+        }
+        
+        # Save to database
+        db.save_document(response_data)
+        
+        # Create response
+        response = OllamaProcessingResponse(
+            id=doc_id,
+            filename=file.filename,
+            document_type=ollama_result["classification"].get("document_type", "unknown"),
+            confidence_score=ollama_result["confidence_score"],
+            processing_time=processing_time,
+            extraction_method=ollama_result["extraction_method"],
+            model_used=ollama_result["model_used"],
+            text_enhancement=ollama_result["text_enhancement"],
+            classification=ollama_result["classification"],
+            extracted_data=ollama_result["extracted_data"],
+            validation=ollama_result["validation"],
+            metadata=response_data["metadata"],
+            upload_timestamp=datetime.now().isoformat()
+        )
+        
+        # Clean up uploaded file
+        background_tasks.add_task(cleanup_file, file_path)
+        
+        return response
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ollama processing error: {str(e)}")
+
+@app.get("/ollama/status")
+async def get_ollama_status():
+    """Check Ollama service status and available models"""
+    try:
+        if ollama_processor.is_available:
+            return {
+                "status": "available",
+                "model": ollama_processor.ollama_processor.model,
+                "base_url": ollama_processor.ollama_processor.base_url,
+                "message": "Ollama service is running and ready for processing"
+            }
+        else:
+            return {
+                "status": "unavailable",
+                "model": None,
+                "base_url": ollama_processor.ollama_processor.base_url,
+                "message": "Ollama service is not available. Please ensure Ollama is running."
+            }
+    except Exception as e:
+        return {
+            "status": "error",
+            "model": None,
+            "base_url": None,
+            "message": f"Error checking Ollama status: {str(e)}"
+        }
+
+@app.get("/ollama/models")
+async def get_available_models():
+    """Get list of available Ollama models"""
+    try:
+        import requests
+        response = requests.get(f"{ollama_processor.ollama_processor.base_url}/api/tags", timeout=5)
+        if response.status_code == 200:
+            models = response.json().get('models', [])
+            return {
+                "status": "success",
+                "models": [{"name": model['name'], "size": model.get('size', 'Unknown')} for model in models],
+                "current_model": ollama_processor.ollama_processor.model
+            }
+        else:
+            return {
+                "status": "error",
+                "models": [],
+                "message": f"Failed to fetch models: {response.status_code}"
+            }
+    except Exception as e:
+        return {
+            "status": "error",
+            "models": [],
+            "message": f"Error fetching models: {str(e)}"
+        }
 
 async def cleanup_file(file_path: Path):
     """Clean up uploaded file after processing"""
