@@ -1,0 +1,17 @@
+
+    FORM W-2
+    WAGE AND TAX STATEMENT
+    
+    Employee: JANE DOE
+    Social Security Number: 123-45-6789
+    Address: 456 OAK AVENUE, SPRINGFIELD, IL 62701
+    
+    Wages, tips, other compensation: $75,000.00
+    Federal income tax withheld: $12,500.00
+    Social security wages: $75,000.00
+    Social security tax withheld: $4,650.00
+    Medicare wages and tips: $75,000.00
+    Medicare tax withheld: $1,087.50
+    
+    Tax Year: 2023
+    

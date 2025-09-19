@@ -1,0 +1,33 @@
+{
+  "batch_id": "6a59bc78-aab8-4a44-9e31-d3653a533403",
+  "total_documents": 1,
+  "processed_documents": 1,
+  "failed_documents": 0,
+  "status": "completed",
+  "results": [
+    {
+      "id": "4b74e875-cd22-4089-8fa9-966c58e8e78d",
+      "filename": "Paddy_Adhar.pdf",
+      "document_type": "unknown",
+      "confidence_score": 0.0,
+      "extracted_data": {
+        "first_name": null,
+        "last_name": null,
+        "date_of_birth": null,
+        "marriage_date": null,
+        "birth_city": null,
+        "ssn": null,
+        "current_address": null,
+        "financial_data": null,
+        "validation": {
+          "is_valid": true,
+          "warnings": [],
+          "errors": [],
+          "field_scores": {}
+        }
+      },
+      "processing_time": 0.049241,
+      "status": "completed"
+    }
+  ]
+}

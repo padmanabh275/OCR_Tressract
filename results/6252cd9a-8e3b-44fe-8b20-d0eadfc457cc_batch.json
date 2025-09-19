@@ -1,0 +1,33 @@
+{
+  "batch_id": "6252cd9a-8e3b-44fe-8b20-d0eadfc457cc",
+  "total_documents": 1,
+  "processed_documents": 1,
+  "failed_documents": 0,
+  "status": "completed",
+  "results": [
+    {
+      "id": "730b14bc-4452-49b6-830b-d15268ef2af4",
+      "filename": "Pan_Card.jpg",
+      "document_type": "unknown",
+      "confidence_score": 0.0,
+      "extracted_data": {
+        "first_name": null,
+        "last_name": null,
+        "date_of_birth": null,
+        "marriage_date": null,
+        "birth_city": null,
+        "ssn": null,
+        "current_address": null,
+        "financial_data": {},
+        "validation": {
+          "is_valid": true,
+          "warnings": [],
+          "errors": [],
+          "field_scores": {}
+        }
+      },
+      "processing_time": 2.130142,
+      "status": "completed"
+    }
+  ]
+}

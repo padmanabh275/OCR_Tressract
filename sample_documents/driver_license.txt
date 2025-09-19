@@ -1,0 +1,13 @@
+
+    DRIVER LICENSE
+    STATE OF CALIFORNIA
+    DEPARTMENT OF MOTOR VEHICLES
+    
+    Name: JOHN MICHAEL SMITH
+    Address: 123 MAIN STREET
+    City: LOS ANGELES, CA 90210
+    Date of Birth: 03/15/1985
+    License Number: D1234567
+    Class: C
+    Expires: 03/15/2025
+    

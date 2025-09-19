@@ -1,0 +1,24 @@
+{
+  "id": "9ec5fe4e-f07a-47b0-8500-a43349d5b661",
+  "filename": "Pan_Card.png",
+  "document_type": "unknown",
+  "confidence_score": 0.0,
+  "extracted_data": {
+    "first_name": null,
+    "last_name": null,
+    "date_of_birth": null,
+    "marriage_date": null,
+    "birth_city": null,
+    "ssn": null,
+    "current_address": null,
+    "financial_data": null,
+    "validation": {
+      "is_valid": true,
+      "warnings": [],
+      "errors": [],
+      "field_scores": {}
+    }
+  },
+  "processing_time": 0.534369,
+  "status": "completed"
+}

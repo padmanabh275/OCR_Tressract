@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Document Extraction System - Session View</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .upload-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f8f9ff;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .result-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .confidence-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .confidence-badge.low {
+            background: #f44336;
+        }
+
+        .confidence-badge.medium {
+            background: #ff9800;
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .field-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .field-label {
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .field-value {
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 10px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #f44336;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .session-info {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .field-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+            const [files, setFiles] = useState([]);
+            const [results, setResults] = useState([]);
+            const [loading, setLoading] = useState(false);
+            const [stats, setStats] = useState({});
+            const [message, setMessage] = useState('');
+            const [sessionId] = useState(() => 'session_' + Date.now());
+
+            useEffect(() => {
+                fetchStats();
+                // Don't fetch historical results - start fresh
+            }, []);
+
+            const fetchStats = async () => {
+                try {
+                    const response = await axios.get('/stats');
+                    setStats(response.data);
+                } catch (error) {
+                    console.error('Error fetching stats:', error);
+                }
+            };
+
+            const handleFileSelect = (selectedFiles) => {
+                setFiles(Array.from(selectedFiles));
+                setMessage('');
+            };
+
+            const handleDragOver = (e) => {
+                e.preventDefault();
+                e.currentTarget.classList.add('dragover');
+            };
+
+            const handleDragLeave = (e) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('dragover');
+            };
+
+            const handleDrop = (e) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('dragover');
+                const droppedFiles = Array.from(e.dataTransfer.files);
+                handleFileSelect(droppedFiles);
+            };
+
+            const processFiles = async () => {
+                if (files.length === 0) {
+                    setMessage('Please select files to process');
+                    return;
+                }
+
+                setLoading(true);
+                setMessage('');
+
+                try {
+                    const formData = new FormData();
+                    files.forEach(file => {
+                        formData.append('files', file);
+                    });
+
+                    const response = await axios.post('/upload/batch', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+
+                    setMessage(`Successfully processed ${response.data.processed_documents} documents`);
+                    setFiles([]);
+                    
+                    // Clear previous results and only show current batch
+                    setResults([]);
+                    setResults(response.data.results || []);
+                    fetchStats();
+                } catch (error) {
+                    setMessage(`Error: ${error.response?.data?.detail || error.message}`);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const clearResults = () => {
+                setResults([]);
+                setMessage('Results cleared');
+            };
+
+            const getConfidenceClass = (score) => {
+                if (score >= 0.8) return 'confidence-badge';
+                if (score >= 0.5) return 'confidence-badge medium';
+                return 'confidence-badge low';
+            };
+
+            const formatValue = (value) => {
+                if (!value) return 'Not found';
+                if (typeof value === 'object') return JSON.stringify(value, null, 2);
+                return value;
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1><i className="fas fa-file-alt"></i> AI Document Extraction System</h1>
+                        <p>Extract structured information from documents using advanced AI/ML</p>
+                    </div>
+
+                    <div className="session-info">
+                        <i className="fas fa-info-circle"></i> <strong>Session Mode:</strong> Only showing documents uploaded in this session. 
+                        Historical data is stored in the database but not displayed here.
+                        <br /><small>Session ID: {sessionId}</small>
+                    </div>
+
+                    <div className="stats-section">
+                        <h2><i className="fas fa-chart-bar"></i> Processing Statistics</h2>
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-number">{results.length}</div>
+                                <div className="stat-label">Current Session</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">{stats.total_documents || 0}</div>
+                                <div className="stat-label">Total in Database</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">{stats.average_confidence || 0}%</div>
+                                <div className="stat-label">Average Confidence</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="main-content">
+                        <div className="upload-section">
+                            <h2><i className="fas fa-upload"></i> Upload Documents</h2>
+                            <div 
+                                className="upload-area"
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                                onClick={() => document.getElementById('fileInput').click()}
+                            >
+                                <div className="upload-icon">
+                                    <i className="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <div className="upload-text">
+                                    Drag and drop files here or click to select
+                                </div>
+                                <input
+                                    id="fileInput"
+                                    type="file"
+                                    multiple
+                                    className="file-input"
+                                    onChange={(e) => handleFileSelect(e.target.files)}
+                                    accept=".pdf,.jpg,.jpeg,.png,.tiff,.txt"
+                                />
+                                <button className="btn">
+                                    <i className="fas fa-folder-open"></i> Choose Files
+                                </button>
+                            </div>
+
+                            {files.length > 0 && (
+                                <div style={{ marginTop: '20px' }}>
+                                    <h3>Selected Files ({files.length})</h3>
+                                    {files.map((file, index) => (
+                                        <div key={index} style={{ 
+                                            padding: '10px', 
+                                            background: '#f0f2ff', 
+                                            margin: '5px 0', 
+                                            borderRadius: '5px',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center'
+                                        }}>
+                                            <span><i className="fas fa-file"></i> {file.name}</span>
+                                            <span style={{ color: '#666' }}>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                                <button 
+                                    className="btn" 
+                                    onClick={processFiles}
+                                    disabled={loading || files.length === 0}
+                                >
+                                    {loading ? (
+                                        <>
+                                            <i className="fas fa-spinner fa-spin"></i> Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="fas fa-magic"></i> Process Documents
+                                        </>
+                                    )}
+                                </button>
+                                
+                                {results.length > 0 && (
+                                    <button 
+                                        className="btn" 
+                                        onClick={clearResults}
+                                        style={{ background: '#f44336', marginLeft: '10px' }}
+                                    >
+                                        <i className="fas fa-trash"></i> Clear Results
+                                    </button>
+                                )}
+                            </div>
+
+                            {message && (
+                                <div className={message.includes('Error') ? 'error' : 'success'}>
+                                    {message}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="results-section">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h2><i className="fas fa-list-alt"></i> Current Session Results</h2>
+                                {results.length > 0 && (
+                                    <button 
+                                        className="btn" 
+                                        onClick={clearResults}
+                                        style={{ background: '#f44336', fontSize: '0.9rem', padding: '8px 16px' }}
+                                    >
+                                        <i className="fas fa-trash"></i> Clear All
+                                    </button>
+                                )}
+                            </div>
+                            {loading ? (
+                                <div className="loading">
+                                    <div className="spinner"></div>
+                                    <p>Processing documents...</p>
+                                </div>
+                            ) : results.length === 0 ? (
+                                <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                                    <i className="fas fa-inbox" style={{ fontSize: '3rem', marginBottom: '20px' }}></i>
+                                    <p>No documents processed in this session</p>
+                                    <p style={{ fontSize: '0.9rem', marginTop: '10px' }}>
+                                        Upload documents to see extraction results here
+                                    </p>
+                                </div>
+                            ) : (
+                                results.map((result, index) => (
+                                    <div key={result.id || index} className="result-item">
+                                        <div className="result-header">
+                                            <div className="result-title">
+                                                <i className="fas fa-file"></i> {result.filename}
+                                            </div>
+                                            <div className={getConfidenceClass(result.confidence_score)}>
+                                                {Math.round(result.confidence_score * 100)}% Confidence
+                                            </div>
+                                        </div>
+                                        <div className="field-grid">
+                                            <div className="field-item">
+                                                <div className="field-label">Document Type</div>
+                                                <div className="field-value">{result.document_type || 'Unknown'}</div>
+                                            </div>
+                                            <div className="field-item">
+                                                <div className="field-label">Processing Time</div>
+                                                <div className="field-value">{result.processing_time?.toFixed(2)}s</div>
+                                            </div>
+                                            <div className="field-item">
+                                                <div className="field-label">First Name</div>
+                                                <div className="field-value">{formatValue(result.extracted_data?.first_name)}</div>
+                                            </div>
+                                            <div className="field-item">
+                                                <div className="field-label">Last Name</div>
+                                                <div className="field-value">{formatValue(result.extracted_data?.last_name)}</div>
+                                            </div>
+                                            <div className="field-item">
+                                                <div className="field-label">Date of Birth</div>
+                                                <div className="field-value">{formatValue(result.extracted_data?.date_of_birth)}</div>
+                                            </div>
+                                            <div className="field-item">
+                                                <div className="field-label">SSN</div>
+                                                <div className="field-value">{formatValue(result.extracted_data?.ssn)}</div>
+                                            </div>
+                                            <div className="field-item">
+                                                <div className="field-label">Address</div>
+                                                <div className="field-value">{formatValue(result.extracted_data?.current_address)}</div>
+                                            </div>
+                                            <div className="field-item">
+                                                <div className="field-label">Marriage Date</div>
+                                                <div className="field-value">{formatValue(result.extracted_data?.marriage_date)}</div>
+                                            </div>
+                                        </div>
+                                        {result.extracted_data?.financial_data && Object.keys(result.extracted_data.financial_data).length > 0 && (
+                                            <div style={{ marginTop: '15px' }}>
+                                                <div className="field-label">Financial Data</div>
+                                                <div className="field-value" style={{ 
+                                                    background: 'white', 
+                                                    padding: '10px', 
+                                                    borderRadius: '5px',
+                                                    fontFamily: 'monospace',
+                                                    fontSize: '0.9rem'
+                                                }}>
+                                                    {formatValue(result.extracted_data.financial_data)}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

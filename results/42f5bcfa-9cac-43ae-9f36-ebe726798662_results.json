@@ -1,0 +1,35 @@
+{
+  "id": "42f5bcfa-9cac-43ae-9f36-ebe726798662",
+  "filename": "ITR 2324.pdf",
+  "document_type": "rental_agreement",
+  "confidence_score": 0.625,
+  "extracted_data": {
+    "first_name": "NAVAGADH",
+    "last_name": "ROAD",
+    "date_of_birth": null,
+    "marriage_date": null,
+    "birth_city": null,
+    "ssn": null,
+    "current_address": "0\nAdjust",
+    "financial_data": {
+      "tax_years": [
+        "2023"
+      ],
+      "income_keywords": [
+        "income",
+        "net",
+        "taxable"
+      ]
+    },
+    "validation": {
+      "is_valid": true,
+      "warnings": [],
+      "errors": [],
+      "field_scores": {
+        "names": 1.0
+      }
+    }
+  },
+  "processing_time": 0.368787,
+  "status": "completed"
+}
