@@ -1,0 +1,57 @@
+[
+  {
+    "document_id": 1,
+    "first_name": "Marriage",
+    "last_name": "Date",
+    "date_of_birth": "1988-05-15",
+    "marriage_date": "1990-07-22",
+    "birth_city": null,
+    "ssn": null,
+    "current_address": "1990\n    Place",
+    "financial_data": {},
+    "document_type": "birth_certificate",
+    "confidence_score": 0.6875
+  },
+  {
+    "document_id": 2,
+    "first_name": "License",
+    "last_name": "Number",
+    "date_of_birth": "1985-03-15",
+    "marriage_date": "2025-03-15",
+    "birth_city": null,
+    "ssn": null,
+    "current_address": "123 MAIN STREET",
+    "financial_data": {},
+    "document_type": "driver_license",
+    "confidence_score": 0.6875
+  },
+  {
+    "document_id": 3,
+    "first_name": "Social",
+    "last_name": "Security",
+    "date_of_birth": null,
+    "marriage_date": null,
+    "birth_city": null,
+    "ssn": "123-45-6789",
+    "current_address": "2\n    WAGE AND TAX STATEMENT\n    \n    Empl",
+    "financial_data": {
+      "amounts_found": [
+        "$75,000.00",
+        "$12,500.00",
+        "$75,000.00",
+        "$4,650.00",
+        "$75,000.00",
+        "$1,087.50"
+      ],
+      "tax_years": [
+        "2023"
+      ],
+      "income_keywords": [
+        "wages",
+        "income"
+      ]
+    },
+    "document_type": "w2_form",
+    "confidence_score": 0.75
+  }
+]

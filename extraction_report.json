@@ -1,0 +1,262 @@
+{
+  "summary": {
+    "total_documents": 3,
+    "successful_extractions": 3,
+    "success_rate": "100.0%",
+    "average_confidence": 0.763,
+    "average_processing_time": 42.73,
+    "generated_at": "2025-09-19T01:56:58.943965"
+  },
+  "document_types": {
+    "birth_certificate": {
+      "count": 1,
+      "average_confidence": 0.717,
+      "average_processing_time": 28.24
+    },
+    "driver_license": {
+      "count": 2,
+      "average_confidence": 0.787,
+      "average_processing_time": 49.97
+    }
+  },
+  "results": [
+    {
+      "document_type": "birth_certificate",
+      "confidence_score": 0.7166666666666668,
+      "extracted_fields": {
+        "personal_info": {
+          "first_name": "RAJESH KUMAR SHARMA",
+          "last_name": null,
+          "full_name": "RAJESH KUMAR SHARMA",
+          "date_of_birth": "15/01/1990",
+          "marriage_date": null,
+          "birth_city": null,
+          "current_address": null
+        },
+        "identification": {
+          "ssn": null,
+          "document_type": "birth_certificate"
+        },
+        "financial_data": {
+          "custom_fields": {
+            "signature": "RAJESH KUMAR SHARMA",
+            "income": "TAX DEPARTMENT",
+            "govt": "OF INDIA",
+            "permanent": "ACCOUNT NUMBER",
+            "pan": ": ABCDE1234F",
+            "fathers": "NAME: RAMESH KUMAR SHARMA",
+            "date": "OF BIRTH: 15/01/1990"
+          },
+          "all_dynamic_fields": {
+            "name": "RAJESH KUMAR SHARMA",
+            "s_name": "RAMESH KUMAR SHARMA",
+            "date_of_birth": "15/01/1990",
+            "signature": "RAJESH KUMAR SHARMA",
+            "income": "TAX DEPARTMENT",
+            "govt": "OF INDIA",
+            "permanent": "ACCOUNT NUMBER",
+            "pan": ": ABCDE1234F",
+            "fathers": "NAME: RAMESH KUMAR SHARMA",
+            "date": "OF BIRTH: 15/01/1990",
+            "f_name": "RAJESH KUMAR SHARMA"
+          },
+          "field_types": {
+            "name": "text",
+            "s_name": "text",
+            "date_of_birth": "date",
+            "signature": "text",
+            "income": "text",
+            "govt": "text",
+            "permanent": "text",
+            "pan": "text",
+            "fathers": "text",
+            "date": "date",
+            "f_name": "text"
+          },
+          "field_confidences": {
+            "name": 0.8,
+            "s_name": 0.8,
+            "date_of_birth": 0.9,
+            "signature": 0.8,
+            "income": 0.6,
+            "govt": 0.6,
+            "permanent": 0.6,
+            "pan": 0.6,
+            "fathers": 0.6,
+            "date": 0.7,
+            "f_name": 0.7
+          }
+        },
+        "metadata": {
+          "confidence_score": 0.7166666666666668,
+          "extraction_method": "standard_enhanced",
+          "raw_text_length": 203
+        }
+      },
+      "processing_method": "standard_enhanced",
+      "processing_time": 28.237022,
+      "validation_results": {
+        "valid": true,
+        "warnings": []
+      },
+      "raw_text": "INCOME TAX DEPARTMENT\nGOVT. OF INDIA\n\nPERMANENT ACCOUNT NUMBER\nP.A.N. : ABCDE1234F\n\nNAME: RAJESH KUMAR SHARMA\n\nFATHER'S NAME: RAMESH KUMAR SHARMA\nDATE OF BIRTH: 15/01/1990\nSIGNATURE: RAJESH KUMAR SHARMA\n"
+    },
+    {
+      "document_type": "driver_license",
+      "confidence_score": 0.74,
+      "extracted_fields": {
+        "personal_info": {
+          "first_name": "JOHN DOE",
+          "last_name": null,
+          "full_name": "JOHN DOE",
+          "date_of_birth": "01/15/1990",
+          "marriage_date": null,
+          "birth_city": null,
+          "current_address": "123 MAIN ST"
+        },
+        "identification": {
+          "ssn": null,
+          "document_type": "driver_license"
+        },
+        "financial_data": {
+          "custom_fields": {
+            "city": "NEW YORK, NY 10001",
+            "license_no": "0123456789",
+            "united": "STATES OF AMERICA",
+            "driver": "LICENSE",
+            "date": "OF BIRTH: 01/15/1990",
+            "license": "NO: 0123456789"
+          },
+          "all_dynamic_fields": {
+            "united_states_of_america_driver_license_name": "JOHN DOE",
+            "date_of_birth": "01/15/1990",
+            "address": "123 MAIN ST",
+            "city": "NEW YORK, NY 10001",
+            "license_no": "0123456789",
+            "expires": "01/15/2025",
+            "united": "STATES OF AMERICA",
+            "driver": "LICENSE",
+            "name": "JOHN DOE",
+            "date": "OF BIRTH: 01/15/1990",
+            "license": "NO: 0123456789"
+          },
+          "field_types": {
+            "united_states_of_america_driver_license_name": "text",
+            "date_of_birth": "date",
+            "address": "address",
+            "city": "number",
+            "license_no": "phone",
+            "expires": "date",
+            "united": "text",
+            "driver": "text",
+            "name": "text",
+            "date": "date",
+            "license": "phone"
+          },
+          "field_confidences": {
+            "united_states_of_america_driver_license_name": 0.8,
+            "date_of_birth": 0.9,
+            "address": 0.9,
+            "city": 0.9,
+            "license_no": 0.9,
+            "expires": 0.9,
+            "united": 0.6,
+            "driver": 0.6,
+            "name": 0.6,
+            "date": 0.7,
+            "license": 0.7
+          }
+        },
+        "metadata": {
+          "confidence_score": 0.74,
+          "extraction_method": "standard_enhanced",
+          "raw_text_length": 175
+        }
+      },
+      "processing_method": "standard_enhanced",
+      "processing_time": 26.266691,
+      "validation_results": {
+        "valid": true,
+        "warnings": []
+      },
+      "raw_text": "UNITED STATES OF AMERICA\nDRIVER LICENSE\n\nNAME: JOHN DOE\n\nDATE OF BIRTH: 01/15/1990\nADDRESS: 123 MAIN ST\n\nCITY: NEW YORK, NY 10001\n\nLICENSE NO: 0123456789\n\nEXPIRES: 01/15/2025\n"
+    },
+    {
+      "document_type": "driver_license",
+      "confidence_score": 0.8333333333333334,
+      "extracted_fields": {
+        "personal_info": {
+          "first_name": null,
+          "last_name": null,
+          "full_name": "",
+          "date_of_birth": null,
+          "marriage_date": null,
+          "birth_city": null,
+          "current_address": null
+        },
+        "identification": {
+          "ssn": null,
+          "document_type": "driver_license"
+        },
+        "financial_data": {
+          "custom_fields": {
+            "yaad_dl_yo_ie_oo_eclat_no": "OOOONO7ESIA56 ioenewwsaeemmaronalaal",
+            "bas": "BAS",
+            "cml2ct": "UHL valde / INFORMATION",
+            "government": "of India Siu Bend Guid BPs} yaad dl yo",
+            "cea": "Froese",
+            "eer": "re",
+            "sou": "sas sit Your Anna No Prensa",
+            "": "6518 9414 Leecoere rere recent",
+            "waa": "Latte tel chat ——————"
+          },
+          "all_dynamic_fields": {
+            "yaad_dl_yo_ie_oo_eclat_no": "OOOONO7ESIA56 ioenewwsaeemmaronalaal",
+            "bas": "BAS",
+            "cml2ct": "UHL valde / INFORMATION",
+            "government": "of India Siu Bend Guid BPs} yaad dl yo",
+            "cea": "Froese",
+            "eer": "re",
+            "sou": "sas sit Your Anna No Prensa",
+            "": "6518 9414 Leecoere rere recent",
+            "waa": "Latte tel chat ——————"
+          },
+          "field_types": {
+            "yaad_dl_yo_ie_oo_eclat_no": "text",
+            "bas": "text",
+            "cml2ct": "text",
+            "government": "text",
+            "cea": "text",
+            "eer": "text",
+            "sou": "text",
+            "": "number",
+            "waa": "text"
+          },
+          "field_confidences": {
+            "yaad_dl_yo_ie_oo_eclat_no": 0.8,
+            "bas": 0.6,
+            "cml2ct": 0.6,
+            "government": 0.6,
+            "cea": 0.6,
+            "eer": 0.6,
+            "sou": 0.6,
+            "": 0.7,
+            "waa": 0.6
+          }
+        },
+        "metadata": {
+          "confidence_score": 0.8333333333333334,
+          "extraction_method": "standard_enhanced",
+          "raw_text_length": 374
+        }
+      },
+      "processing_method": "standard_enhanced",
+      "processing_time": 73.682462,
+      "validation_results": {
+        "valid": true,
+        "warnings": []
+      },
+      "raw_text": "BAS BAS\n& =\ng By. | & IBS.\nCMl2ct UHL valde / INFORMATION\nGovernment of India Siu Bend Guid BPs} yaad dl yo\nie oo Eclat No: OOOONO7ESIA56 ioenewwsaeemmaronalaal\ncea Froese\neer re\nsou sas sit Your Anna No Prensa\n9795 6518 9414 Leecoere rere recent\nwaa Latte tel chat ——————\n— zi —— —y\n————————- SY ‘Unquataanmearonannonyctinas “ZN\ni or Shseamn emote peemaien\nH Saher aoa Bae\n"
+    }
+  ]
+}

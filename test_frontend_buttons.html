@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Frontend Buttons</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            border: 2px solid #667eea;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            border-color: #5a6fd8;
+        }
+
+        .test-container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function ButtonTest() {
+            const [filters, setFilters] = useState({
+                minConfidence: 0
+            });
+
+            const handleFilterClick = (confidence) => {
+                setFilters({...filters, minConfidence: confidence});
+                console.log(`Filter clicked: ${confidence}`);
+            };
+
+            return (
+                <div className="test-container">
+                    <h1>Frontend Button Test</h1>
+                    <p>Testing the confidence filter buttons functionality</p>
+                    
+                    <div className="status">
+                        <strong>Current Filter:</strong> {filters.minConfidence === 0 ? 'All' : 
+                            filters.minConfidence === 0.7 ? 'High (0.7+)' :
+                            filters.minConfidence === 0.4 ? 'Medium+ (0.4+)' :
+                            filters.minConfidence === 0.1 ? 'Low+ (0.1+)' : 'Unknown'}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <span style={{ fontWeight: 'bold', marginRight: '5px' }}>Quick Filters:</span>
+                        <button 
+                            className={`btn ${filters.minConfidence === 0.7 ? 'btn-primary' : 'btn-outline'}`}
+                            onClick={() => handleFilterClick(0.7)}
+                            style={{ fontSize: '0.9rem', padding: '5px 10px' }}
+                        >
+                            <i className="fas fa-star"></i> High (0.7+)
+                        </button>
+                        <button 
+                            className={`btn ${filters.minConfidence === 0.4 ? 'btn-primary' : 'btn-outline'}`}
+                            onClick={() => handleFilterClick(0.4)}
+                            style={{ fontSize: '0.9rem', padding: '5px 10px' }}
+                        >
+                            <i className="fas fa-star-half-alt"></i> Medium+ (0.4+)
+                        </button>
+                        <button 
+                            className={`btn ${filters.minConfidence === 0.1 ? 'btn-primary' : 'btn-outline'}`}
+                            onClick={() => handleFilterClick(0.1)}
+                            style={{ fontSize: '0.9rem', padding: '5px 10px' }}
+                        >
+                            <i className="fas fa-star-o"></i> Low+ (0.1+)
+                        </button>
+                        <button 
+                            className={`btn ${filters.minConfidence === 0 ? 'btn-primary' : 'btn-outline'}`}
+                            onClick={() => handleFilterClick(0)}
+                            style={{ fontSize: '0.9rem', padding: '5px 10px' }}
+                        >
+                            <i className="fas fa-list"></i> All
+                        </button>
+                    </div>
+
+                    <div style={{ marginTop: '20px' }}>
+                        <h3>Test Instructions:</h3>
+                        <ol>
+                            <li>Click each button to test the functionality</li>
+                            <li>Check that the status updates correctly</li>
+                            <li>Verify that only one button is highlighted at a time</li>
+                            <li>Check the browser console for click events</li>
+                        </ol>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<ButtonTest />, document.getElementById('root'));
+    </script>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</body>
+</html>

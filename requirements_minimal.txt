@@ -1,0 +1,11 @@
+# Minimal requirements for basic functionality
+opencv-python
+Pillow
+PyMuPDF
+python-dateutil
+pytesseract
+pydantic
+fastapi
+uvicorn
+python-multipart
+jinja2
